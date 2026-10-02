@@ -4,6 +4,7 @@
   --focus: #8f090f;
 }
 html { scrollbar-color: var(--line) var(--paper); }
+.scroll-reveal-pending { opacity: 0; }
 body { overflow-wrap: break-word; }
 input { caret-color: var(--ink); }
 h1, h2, h3, .brand > span { letter-spacing: -.035em; }
@@ -156,10 +157,12 @@ h1, h2, h3, .brand > span { letter-spacing: -.035em; }
   .service-image { height: 290px; }
 }
 @media (prefers-reduced-motion:reduce) {
+  .scroll-reveal-pending { opacity: 1; }
   .studio-ribbon { padding-right: 0; }
   .button:active:not(:disabled), .service-detail-button:active, .week-buttons button:active:not(:disabled) { transform: none; }
 }
 @media print {
+  .scroll-reveal-pending { opacity: 1!important; }
   .desktop-navigation, .marquee-control { display: none!important; }
   .wrap { width: 100%; }
   .price-section.section-space { padding-block: 20.4px; }

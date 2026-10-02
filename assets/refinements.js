@@ -2,7 +2,7 @@
 (() => {
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   let keyboard = false;
-  document.addEventListener('keydown', () => { keyboard = true; }, true);
+  document.addEventListener('keydown', () => { keyboard = true; showPendingContent(); }, true);
   document.addEventListener('pointerdown', () => { keyboard = false; }, true);
   const animations = new Set();
   function animate(element, frames, options = {}) {
@@ -17,6 +17,7 @@
     if (reduced.matches) {
       animations.forEach(control => control.complete());
       animations.clear();
+      showPendingContent();
     }
   });
   function initialize() {
@@ -39,13 +40,34 @@
   }
   const processed = new WeakSet();
   const revealed = new WeakSet();
-  const scrollReveals = new IntersectionObserver(entries => {
+  const pendingReveals = new Set();
+  function showPendingContent() {
+    pendingReveals.forEach(element => {
+      element.classList.remove('scroll-reveal-pending');
+      scrollReveals?.unobserve(element);
+    });
+    pendingReveals.clear();
+  }
+  window.addEventListener('beforeprint', () => {
+    showPendingContent();
+    animations.forEach(control => control.complete());
+  });
+  document.addEventListener('focusin', event => {
+    const element = event.target.closest('.scroll-reveal-pending');
+    if (!element) return;
+    element.classList.remove('scroll-reveal-pending');
+    pendingReveals.delete(element);
+    scrollReveals?.unobserve(element);
+  });
+  const scrollReveals = typeof IntersectionObserver === 'function' ? new IntersectionObserver(entries => {
     entries.forEach(({ target, isIntersecting }) => {
       if (!isIntersecting) return;
       scrollReveals.unobserve(target);
-      animate(target, { opacity: [.65, 1], transform: ['translateY(14px)', 'translateY(0px)'] }, { duration: .4 });
+      pendingReveals.delete(target);
+      target.classList.remove('scroll-reveal-pending');
+      animate(target, { opacity: [0, 1] }, { duration: .65, ease: [.16, 1, .3, 1] });
     });
-  }, { threshold: .12 });
+  }, { threshold: 0, rootMargin: '0px 0px -24px 0px' }) : null;
   function cleanDashes() {
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
     while (walker.nextNode()) {
@@ -59,11 +81,21 @@
   }
   function enhanceStates() {
     cleanDashes();
-    document.querySelectorAll('.service-card, .price-layout, .booking-layout, .studio-note').forEach(element => {
+    pendingReveals.forEach(element => {
+      if (element.isConnected) return;
+      scrollReveals?.unobserve(element);
+      pendingReveals.delete(element);
+    });
+    document.querySelectorAll('.section-heading, .category-tabs, .service-card, .price-intro, .price-category, .booking-calendar, .booking-form-panel, .studio-note, .footer-top, .footer-bottom, .brochure-section > .section-note, .price-menu > .section-note').forEach(element => {
       if (revealed.has(element)) return;
       revealed.add(element);
-      // Content stays visible before JS, when printing, and with reduced motion.
-      if (element.getBoundingClientRect().top >= innerHeight) scrollReveals.observe(element);
+      // Hide only offscreen content when Motion and the observer are ready.
+      // Keyboard, print and reduced-motion paths show it immediately.
+      if (window.Motion && scrollReveals && !keyboard && !reduced.matches && element.getBoundingClientRect().top >= innerHeight) {
+        element.classList.add('scroll-reveal-pending');
+        pendingReveals.add(element);
+        scrollReveals.observe(element);
+      }
     });
     document.querySelectorAll('.navigation-drawer[data-state="open"], .navigation-overlay[data-state="open"], .inquiry-result, [role="tabpanel"][data-state="active"]').forEach(element => {
       if (processed.has(element)) return;
