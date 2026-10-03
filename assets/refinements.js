@@ -32,33 +32,7 @@
     instagram.setAttribute('aria-label', 'Hella Nails by Kristel on Instagram, opens in a new tab');
     instagram.insertAdjacentHTML('afterbegin', '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor" stroke="none"/></svg>');
     const track = document.querySelector('.marquee-track');
-    track.parentElement.setAttribute('aria-label', 'Studio highlights. Use the pause control to stop scrolling.');
-    const pause = document.createElement('button');
-    pause.type = 'button';
-    pause.className = 'marquee-control';
-    pause.textContent = 'Pause';
-    pause.setAttribute('aria-label', 'Pause studio highlights');
-    pause.setAttribute('aria-pressed', 'false');
-    pause.addEventListener('click', () => {
-      const paused = track.dataset.paused !== 'true';
-      track.dataset.paused = String(paused);
-      pause.textContent = paused ? 'Play' : 'Pause';
-      pause.setAttribute('aria-label', `${paused ? 'Play' : 'Pause'} studio highlights`);
-      pause.setAttribute('aria-pressed', String(paused));
-    });
-    track.parentElement.append(pause);
-    const ribbon = track.parentElement;
-    let inView = true;
-    const syncPlayback = () => { track.dataset.inactive = String(!inView || document.hidden); };
-    document.addEventListener('visibilitychange', syncPlayback);
-    if (typeof IntersectionObserver === 'function') {
-      const ribbonObserver = new IntersectionObserver(([entry]) => {
-        inView = entry.isIntersecting;
-        syncPlayback();
-      });
-      ribbonObserver.observe(track.parentElement);
-    }
-    syncPlayback();
+    track.parentElement.setAttribute('aria-label', 'Studio highlights.');
     animate(document.querySelector('.hero-hand img'), {
       opacity: [.8, 1], transform: ['translateY(12px)', 'translateY(0px)']
     }, { duration: .45 });
