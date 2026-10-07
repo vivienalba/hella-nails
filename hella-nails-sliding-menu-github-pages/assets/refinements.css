@@ -107,12 +107,11 @@ h1, h2 { text-wrap: balance; }
 .dialog-copy > .eyebrow { display: none; }
 .dialog-image { width: 100%; height: 100%; min-height: 500px; }
 .policy-dialog [data-slot=dialog-title] { padding-right: 44px; line-height: 1.2; }
-.studio-ribbon { padding-right: 76px; overflow: hidden; }
+.studio-ribbon { padding-right: 0; overflow: hidden; }
 .marquee-track { animation: studio-marquee 32s linear infinite; width: max-content; }
 .marquee-group { min-width: max-content; width: auto; justify-content: center; }
 .marquee-group[aria-hidden=true] { display: flex; }
 .studio-ribbon:focus-within .marquee-track, .marquee-track.paused { animation-play-state: paused; }
-.marquee-control { position: absolute; width: 76px; height: 100%; min-height: 44px; border: 0; border-left: 1px solid #f7f2e870; }
 .button, .service-detail-button, .week-buttons button, .header-menu-toggle, .copy-inquiry {
   transition: background-color 160ms ease, color 160ms ease, transform 140ms var(--ease-out);
 }
@@ -192,16 +191,21 @@ h1, h2 { text-wrap: balance; }
   .booking-form-panel { padding: 24px 16px; }
   .service-price { font-size: 1.55rem; }
 }
-@media (prefers-reduced-motion:reduce) {
-  .studio-ribbon { padding-right: 0; }
-  .marquee-track { animation: none; width: 100%; }
-  .marquee-group { flex-wrap: wrap; min-width: 0; justify-content: center; gap: 12px 20px; }
-  .marquee-group[aria-hidden=true], .marquee-control { display: none; }
-  .button:active:not(:disabled), .service-detail-button:active, .week-buttons button:active:not(:disabled), .header-menu-toggle:active { transform: none; }
-}
+
 @media print {
   .wrap { width: 100%; }
   .price-section.section-space { padding-block: 20px; }
   .price-layout { display: block; }
   .price-menu { grid-template-columns: 1fr 1fr; }
 }
+
+/* Motion detail: Anime.js owns transforms on images, rows and revealed content. */
+.service-image .salon-photo { transform-origin: center; }
+.price-row { overflow: hidden; }
+.price-row > span:first-child { transform-origin: left center; }
+.text-link::after { transition: transform 220ms var(--ease-out); }
+@media (hover:hover) and (pointer:fine) {
+  .text-link:hover::after { transform: translateX(3px) rotate(45deg); }
+}
+.text-link:focus-visible::after { transform: translateX(3px) rotate(45deg); }
+

@@ -1,32 +1,23 @@
 /* Progressive enhancements: the original React app owns all booking state. */
 (() => {
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   let keyboard = false;
-  document.addEventListener('keydown', () => { keyboard = true; showPendingContent(); }, true);
+  document.addEventListener('keydown', () => { keyboard = true; }, true);
   document.addEventListener('pointerdown', () => { keyboard = false; }, true);
   const animations = new Set();
   function animate(element, frames, options = {}) {
-    if (!element || reduced.matches || keyboard || !window.Motion) return;
+    if (!element || keyboard || !window.Motion) return;
     const controls = Motion.animate(element, frames, {
       duration: .22, ease: [.23, 1, .32, 1], ...options
     });
     animations.add(controls);
     controls.then(() => animations.delete(controls));
   }
-  reduced.addEventListener('change', () => {
-    if (reduced.matches) {
-      animations.forEach(control => control.complete());
-      animations.clear();
-      showPendingContent();
-    }
-  });
   let heroMedia;
   function setupHeroMotion() {
     const hero = document.querySelector('.hero');
     if (!hero || !window.gsap) return;
-    // GSAP owns only the hero; Motion owns drawer, tabs, and inquiry feedback.
-    heroMedia = gsap.matchMedia();
-    heroMedia.add('(prefers-reduced-motion: no-preference)', () => {
+    // GSAP owns only the hero; Motion owns drawer and inquiry feedback; Anime.js owns content transitions.
+    heroMedia = gsap.context(() => {
       if (keyboard || scrollY > 40) return;
       gsap.timeline({ defaults: { ease: 'expo.out', clearProps: 'opacity,transform' } })
         .fromTo(hero.querySelector('h1'), { opacity: .7, y: 12 }, { opacity: 1, y: 0, duration: .55 }, 0)
@@ -47,42 +38,14 @@
     const track = document.querySelector('.marquee-track');
     const ribbon = track.parentElement;
     ribbon.setAttribute('aria-label', 'Studio highlights. Focus to pause scrolling.');
-    const pause = document.createElement('button');
-    pause.type = 'button'; pause.className = 'marquee-control';
-    pause.textContent = 'Pause'; pause.setAttribute('aria-label', 'Pause studio highlights');
-    pause.setAttribute('aria-pressed', 'false');
-    pause.addEventListener('click', () => {
-      const paused = track.classList.toggle('paused');
-      pause.textContent = paused ? 'Resume' : 'Pause';
-      pause.setAttribute('aria-pressed', String(paused));
-      pause.setAttribute('aria-label', paused ? 'Resume studio highlights' : 'Pause studio highlights');
-    });
-    ribbon.append(pause);
     setupHeroMotion();
     return true;
   }
   const processed = new WeakSet();
-  const revealed = new WeakSet();
-  const pendingReveals = new Set();
-  function showPendingContent() {
-    pendingReveals.forEach(element => {
-      scrollReveals?.unobserve(element);
-    });
-    pendingReveals.clear();
-  }
   window.addEventListener('beforeprint', () => {
     heroMedia?.revert();
-    showPendingContent();
     animations.forEach(control => control.complete());
   });
-  const scrollReveals = typeof IntersectionObserver === 'function' ? new IntersectionObserver(entries => {
-    entries.forEach(({ target, isIntersecting }) => {
-      if (!isIntersecting) return;
-      scrollReveals.unobserve(target);
-      pendingReveals.delete(target);
-      animate(target, { opacity: [.85, 1] }, { duration: .24, ease: [.16, 1, .3, 1] });
-    });
-  }, { threshold: 0, rootMargin: '0px 0px -24px 0px' }) : null;
   function cleanDashes() {
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
     while (walker.nextNode()) {
@@ -111,21 +74,7 @@
       if (hint.textContent !== text) hint.textContent = text;
       hint.hidden = !text;
     }
-    pendingReveals.forEach(element => {
-      if (element.isConnected) return;
-      scrollReveals?.unobserve(element);
-      pendingReveals.delete(element);
-    });
-    document.querySelectorAll('.section-heading, .category-tabs, .service-card, .price-intro, .price-category, .booking-calendar, .booking-form-panel, .studio-note, .footer-top, .footer-bottom, .brochure-section > .section-note, .price-menu > .section-note').forEach(element => {
-      if (revealed.has(element)) return;
-      revealed.add(element);
-      // Observe visible baseline content. No CSS hiding or delayed access to controls.
-      if (window.Motion && scrollReveals && !keyboard && !reduced.matches && element.getBoundingClientRect().top >= innerHeight) {
-        pendingReveals.add(element);
-        scrollReveals.observe(element);
-      }
-    });
-    document.querySelectorAll('.navigation-drawer[data-state="open"], .navigation-overlay[data-state="open"], .inquiry-result, [role="tabpanel"][data-state="active"]').forEach(element => {
+    document.querySelectorAll('.navigation-drawer[data-state="open"], .navigation-overlay[data-state="open"], .inquiry-result').forEach(element => {
       if (processed.has(element)) return;
       processed.add(element);
       if (element.matches('.navigation-drawer')) {
@@ -154,8 +103,6 @@
           }
         });
         element.append(copy);
-      } else {
-        animate(element, { opacity: [.7, 1] }, { duration: .18 });
       }
     });
   }
@@ -167,7 +114,7 @@
   observer.observe(document.body, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ['data-state'] });
   window.addEventListener('pagehide', event => {
     if (event.persisted) return;
-    observer.disconnect(); scrollReveals?.disconnect();
+    observer.disconnect();
     animations.forEach(control => control.complete()); animations.clear();
     heroMedia?.revert();
   });
