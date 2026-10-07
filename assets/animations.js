@@ -39,22 +39,14 @@
   function finishAll() {
     for (const [element, entry] of active) restore(element, entry);
   }
-  function reveal(element, delay = 0) {
-    if (element.matches('.section-heading, .price-intro')) {
-      play(element, { opacity: [.55, 1], y: [22, 0] }, { duration: 700, delay });
-    } else if (element.matches('.service-card')) {
-      play(element, { opacity: [.4, 1], y: [30, 0] }, { duration: 650, delay });
-    } else {
-      play(element, { opacity: [.65, 1], y: [18, 0] }, { duration: 560, delay });
-    }
+  function reveal(element) {
+    play(element, { opacity: [.65, 1], y: [18, 0] }, { duration: 560 });
   }
   const observer = new IntersectionObserver(entries => {
-    let cardIndex = 0;
     for (const {target, isIntersecting} of entries) {
       if (!isIntersecting) continue;
       observer.unobserve(target); awaiting.delete(target);
-      const delay = target.matches('.service-card') ? Math.min(cardIndex++ * 70, 210) : 0;
-      reveal(target, delay);
+      reveal(target);
     }
   }, { threshold: .08, rootMargin: '0px 0px -20px 0px' });
 
@@ -73,7 +65,7 @@
     if (!started) { started = true; if (scrollY < 40) startHeroAccents(); }
     for (const [element, entry] of active) if (!element.isConnected) restore(element, entry);
     for (const element of awaiting) if (!element.isConnected) { observer.unobserve(element); awaiting.delete(element); }
-    document.querySelectorAll('.section-heading, .service-card, .price-intro, .price-category, .booking-calendar, .booking-form-panel, .studio-note, .footer-top').forEach(element => {
+    document.querySelectorAll('.price-category, .booking-calendar, .booking-form-panel, .studio-note, .footer-top').forEach(element => {
       if (seen.has(element)) return;
       seen.add(element); awaiting.add(element); observer.observe(element);
     });
@@ -110,7 +102,7 @@
     feedback(item, event.type === 'focusin' || (finePointer.matches && item.matches(':hover')));
     // Bring keyboard focus to an immediately usable, fully opaque ancestor.
     if (event.type === 'focusin') {
-      const revealTarget = event.target.closest('.service-card, .booking-calendar, .booking-form-panel');
+      const revealTarget = event.target.closest('.booking-calendar, .booking-form-panel');
       if (revealTarget) {
         observer.unobserve(revealTarget); awaiting.delete(revealTarget);
         const entry = active.get(revealTarget); if (entry) restore(revealTarget, entry);

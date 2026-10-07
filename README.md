@@ -7,12 +7,13 @@ Refined static website, ready for the existing GitHub Pages setup.
 - Preserved the cream and oxblood palette, serif identity, supplied photos, prices, and inquiry workflow.
 - Unified spacing, heading rhythm, service-card alignment, borders, and mobile layouts.
 - Improved touch targets, keyboard focus, date selection, form spacing, and the explanation shown when consent is still needed.
-- Added a restrained GSAP 3.13.0 entrance for the hero heading and hand. GSAP owns those elements only; the existing Motion 13.5.0 library owns menu and inquiry feedback. Anime.js owns section, card, and booking-summary motion.
+- Added a restrained GSAP 3.13.0 entrance for the hero heading and hand. GSAP owns those elements only; the existing Motion 13.5.0 library owns menu and inquiry feedback. Anime.js owns supporting-content and booking-summary motion.
 - Shortened the menu link stagger and reduced travel. Controls stay usable during motion.
 - Replaced the old unused remote Anime.js integration with locally bundled Anime.js 4.1.3 targeting the actual interface.
 - Kept content visible before scroll effects initialize, including when animation libraries cannot load.
 - Removed the marquee pause button and its reserved space. The strip spans the full width; hover and keyboard focus can still pause it.
-- Added Anime.js 4.1.3: staggered service-card entrances, section reveals, photo zoom on hover/focus, price-row feedback, starburst line drawing, hero side-copy entrances, and week/booking-summary transitions.
+- Anime.js 4.1.3 handles photo zoom on hover/focus, price-row feedback, starburst line drawing, hero side-copy entrances, supporting-content reveals, and week/booking-summary transitions.
+- Removed the added service-card and section-heading reveal animations. Cards and section headings appear immediately, including after a category change.
 - Full animations stay active regardless of the device motion preference, as requested.
 - Both the root site and the enclosed legacy folder now load the same refinements.
 
