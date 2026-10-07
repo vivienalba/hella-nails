@@ -1,14 +1,12 @@
-Upload these built files to your existing GitHub Pages repository.
+# Update your existing website
 
-1. Extract this ZIP. index.html belongs at the repository root.
-2. Replace the old website files with these files, keeping your .git folder and any custom CNAME file.
-3. From inside your cloned repository run:
+1. Extract the ZIP and open the `hella-nails-main` folder.
+2. Upload `index.html`, `favicon.svg`, `.nojekyll`, the complete `assets` folder, and the complete `images` folder to the root of your existing GitHub Pages repository. Replace the matching website files. Keep any existing `CNAME` and repository settings.
+3. Commit the changes and allow GitHub Pages to finish deploying.
+4. Refresh the published page. If the old design remains cached, perform a hard refresh.
 
-   git status
-   git add .
-   git commit -m "Update salon navigation and headings"
-   git push
+Do not upload the outer `hella-nails-main` folder as an extra level. The nested `hella-nails-sliding-menu-github-pages` folder is a compatibility copy; it is not required for a root deployment.
 
-Keep GitHub Pages set to deploy from your existing branch and root folder.
-This is an inquiry composer; appointments require Kristel's confirmation.
-See IMAGE-NOTES.md for image permission notes.
+There is no build step. All animation libraries are included locally.
+
+This is an inquiry composer; appointments require Kristel’s confirmation. See IMAGE-NOTES.md for existing image notes.

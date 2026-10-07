@@ -1,35 +1,47 @@
 # Hella Nails by Kristel
 
-Static, GitHub Pages ready website. This project contains the original compiled React application, its styles and salon assets; no original component source, package manifest, build command or test runner was supplied.
+Refined static website, ready for the existing GitHub Pages setup.
+
+## What changed
+
+- Preserved the cream and oxblood palette, serif identity, supplied photos, prices, and inquiry workflow.
+- Unified spacing, heading rhythm, service-card alignment, borders, and mobile layouts.
+- Improved touch targets, keyboard focus, date selection, form spacing, and the explanation shown when consent is still needed.
+- Added a restrained GSAP 3.13.0 entrance for the hero heading and hand. GSAP owns those elements only; the existing Motion 13.5.0 library owns menu, tab, and inquiry feedback.
+- Shortened the menu link stagger and reduced travel. Controls stay usable during motion.
+- Removed the unused remote Anime.js script, which targeted nonexistent classes and produced an error when unavailable.
+- Kept content visible before scroll effects initialize, including when animation libraries cannot load.
+- Added pause/resume, hover pause, and keyboard-focus pause to the existing studio ribbon. Reduced-motion users get a static, wrapped version.
+- Both the root site and the enclosed legacy folder now load the same refinements.
 
 ## Preview
 
-From this directory, run:
+From this directory run:
 
 ```sh
 python3 -m http.server 4173 --bind 127.0.0.1
 ```
 
-Open http://127.0.0.1:4173 in a browser. Stop the server with Ctrl+C. Preview through the server rather than opening index.html directly, because the original application uses a JavaScript module.
+Open http://127.0.0.1:4173. Use a server rather than double-clicking index.html: the original application loads as a JavaScript module.
 
-## Editing
+## Edit
 
-- `assets/refinements.css` refines the existing cream and oxblood design, responsive layouts, navigation, filters, form states and focus treatments.
-- Padding, margins, gaps and page gutters are reduced by 15 percent. Control touch targets and image dimensions are retained.
-- `assets/refinements.js` adds progressive navigation, copy inquiry and restrained Motion animations. Studio highlights scroll continuously without stopping on hover or touch. Reduced-motion users get a static strip. The original React application continues to own service selection, dates, consent, dialogs and inquiry generation.
-- The left three-line menu works on all screen sizes. Its links fade and slide in from left to right in sequence. The landing page Instagram logo opens Kristel’s account in a new tab. Visible editorial dashes are replaced with spaces or “to” for ranges. User-entered inquiry text and contact links are preserved. Motion fades offscreen content from transparent to visible over 0.65 seconds as it enters the viewport; reduced-motion and keyboard users receive immediate content.
-- `assets/vendor/motion.js` is the local browser distribution of the already installed Motion 13.5.0 library, with its MIT license alongside it. No new animation package or runtime CDN is required.
-- Original compiled assets and images are preserved. Deploy all files together using `UPLOAD-GUIDE.md`.
+- `assets/refinements.css`: visual and responsive adjustments.
+- `assets/refinements.js`: progressive enhancements and motion.
+- `assets/vendor/gsap.min.js`: GSAP 3.13.0, locally bundled with its license notice.
+- `assets/vendor/motion.js`: the existing Motion 13.5.0 library.
+- `index.html`: stylesheet and script loading.
+
+The supplied archive contains a compiled React application, not its original component source or build project. No npm install or rebuild is required for these static files. The compiled application still owns booking state, dialogs, service selection, dates, and inquiry text. If you edit the root files later, use the root version for deployment; the legacy folder is a synchronized copy for compatibility.
 
 ## Verification
 
-JavaScript syntax checks:
+Automated Chromium checks covered 320, 390, 768, and 1440 pixel widths, image loading, horizontal overflow, service filtering and details, menu Escape/focus return, service/date selection, consent guidance, inquiry generation, SMS URL composition, copy feedback, invalidation of a prepared inquiry after form edits, live reduced-motion changes, print visibility, the legacy entry point, and unavailable animation libraries. JavaScript syntax checks passed. No runtime exceptions occurred during the verification flow.
 
-```sh
-node --check assets/refinements.js
-node --check assets/index-BmY98v4H.js
-```
+The scrolling ribbon is retained as an intentional part of the supplied design; it has explicit pause/resume and reduced-motion support. Real-device Safari, screen-reader testing, and actual SMS sending remain manual checks. No message was sent and no appointment was booked during verification.
 
-Browser checks covered 320, 390, 768 and 1440 pixel widths; image loading; service details and selection; navigation focus and Escape dismissal; date selection and consent; inquiry text and SMS destination; copy inquiry availability; marquee pause; privacy dialog; reduced motion; and print layout. No runtime exceptions were observed. Physical device and screen reader testing remain manual checks.
+## Upload
 
-Appointments remain inquiries that require Kristel's confirmation. This site does not send messages, reserve slots or take payments automatically.
+Follow UPLOAD-GUIDE.md. This update has not been published.
+
+Appointments remain inquiries requiring Kristel’s confirmation. The site does not reserve slots or take payments automatically.
