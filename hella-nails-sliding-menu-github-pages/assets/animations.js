@@ -46,7 +46,7 @@
     play(element, {
       opacity: [heading ? .9 : .82, 1],
       y: [card ? 14 : 10, 0]
-    }, { duration: heading ? 900 : 850, ease: 'outCubic', delay });
+    }, { duration: heading ? 1500 : 1400, ease: 'outCubic', delay });
   }
   const observer = new IntersectionObserver(entries => {
     let cardIndex = 0;

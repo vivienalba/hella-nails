@@ -13,7 +13,7 @@ Refined static website, ready for the existing GitHub Pages setup.
 - Kept content visible before scroll effects initialize, including when animation libraries cannot load.
 - Removed the marquee pause button and its reserved space. The strip spans the full width; hover and keyboard focus can still pause it.
 - Anime.js 4.1.3 handles photo zoom on hover/focus, price-row feedback, starburst line drawing, hero side-copy entrances, supporting-content reveals, and week/booking-summary transitions.
-- Restored card and heading reveals with a gentler 850–900 ms cubic ease, 10–14 px of movement, softer starting opacity, and a short 45 ms card stagger. Reveals begin just before entering the viewport to avoid a visible start-up jump.
+- Restored card and heading reveals with a gentler 1400–1500 ms cubic ease, 10–14 px of movement, softer starting opacity, and a short 45 ms card stagger. Reveals begin just before entering the viewport to avoid a visible start-up jump.
 - Full animations stay active regardless of the device motion preference, as requested.
 - Both the root site and the enclosed legacy folder now load the same refinements.
 
