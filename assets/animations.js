@@ -39,16 +39,25 @@
   function finishAll() {
     for (const [element, entry] of active) restore(element, entry);
   }
-  function reveal(element) {
-    play(element, { opacity: [.65, 1], y: [18, 0] }, { duration: 560 });
+  function reveal(element, delay = 0) {
+    const card = element.matches('.service-card');
+    const heading = element.matches('.section-heading, .price-intro');
+    // Short travel and a gentle fade avoid the old sudden jump on entry.
+    play(element, {
+      opacity: [heading ? .9 : .82, 1],
+      y: [card ? 14 : 10, 0]
+    }, { duration: heading ? 900 : 850, ease: 'outCubic', delay });
   }
   const observer = new IntersectionObserver(entries => {
+    let cardIndex = 0;
     for (const {target, isIntersecting} of entries) {
       if (!isIntersecting) continue;
       observer.unobserve(target); awaiting.delete(target);
-      reveal(target);
+      const delay = target.matches('.service-card') ? Math.min(cardIndex++ * 45, 135) : 0;
+      reveal(target, delay);
     }
-  }, { threshold: .08, rootMargin: '0px 0px -20px 0px' });
+  // Start just before content enters the viewport, instead of moving it after it appears.
+  }, { threshold: 0, rootMargin: '0px 0px 64px 0px' });
 
   function startHeroAccents() {
     play(document.querySelector('.hero-side-left p'), {opacity: [.5,1], y: [16,0]}, {duration:650,delay:100});
@@ -65,7 +74,7 @@
     if (!started) { started = true; if (scrollY < 40) startHeroAccents(); }
     for (const [element, entry] of active) if (!element.isConnected) restore(element, entry);
     for (const element of awaiting) if (!element.isConnected) { observer.unobserve(element); awaiting.delete(element); }
-    document.querySelectorAll('.price-category, .booking-calendar, .booking-form-panel, .studio-note, .footer-top').forEach(element => {
+    document.querySelectorAll('.section-heading, .service-card, .price-intro, .price-category, .booking-calendar, .booking-form-panel, .studio-note, .footer-top').forEach(element => {
       if (seen.has(element)) return;
       seen.add(element); awaiting.add(element); observer.observe(element);
     });
@@ -102,7 +111,7 @@
     feedback(item, event.type === 'focusin' || (finePointer.matches && item.matches(':hover')));
     // Bring keyboard focus to an immediately usable, fully opaque ancestor.
     if (event.type === 'focusin') {
-      const revealTarget = event.target.closest('.booking-calendar, .booking-form-panel');
+      const revealTarget = event.target.closest('.service-card, .booking-calendar, .booking-form-panel');
       if (revealTarget) {
         observer.unobserve(revealTarget); awaiting.delete(revealTarget);
         const entry = active.get(revealTarget); if (entry) restore(revealTarget, entry);
